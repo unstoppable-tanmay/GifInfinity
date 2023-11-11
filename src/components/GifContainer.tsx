@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { delay } from "../helpers/utils";
-import { message } from "antd";
+import { Pagination, message } from "antd";
 
 import useUser from "@/app/store/useUser";
 import { GiphyFetch } from "@giphy/js-fetch-api";
@@ -11,23 +11,33 @@ import { doc, updateDoc } from "@firebase/firestore";
 import { db } from "@/helpers/firebase";
 import GifImage from "./GifImage";
 
+// the giphyfetch instance
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 
 const GifContainer = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Animation states
   const [animated, setAnimated] = useState(false);
   const [closed, setClosed] = useState(false);
   const [loader, setLoader] = useState(false);
 
+  // message api of antd
   const [messageApi, contextHolder] = message.useMessage();
 
+  // Gif search states
   const [searchData, setSearchData] = useState("");
   const [gif, setGif] = useState<any[]>([]);
   const [isGifLoaded, setIsGifLoaded] = useState(false);
   const [gifloadmore, setGifloadmore] = useState(1);
 
-  const { isUser, user, setUser } = useUser();
+  // Page size for pagination
+  const [page, setPage] = useState(1);
+  const [pageSize, setPaseSize] = useState(18);
 
+  const { isUser, user, setUser } = useUser(); // the user store 
+
+  // Function For Calling The message in ANTD
   const OpenMessage = (type: NoticeType, content: string) => {
     messageApi.open({
       type: type,
@@ -35,6 +45,7 @@ const GifContainer = () => {
     });
   };
 
+  // Animate The search Box
   const animate = async () => {
     setAnimated(true);
     await delay(300);
@@ -42,6 +53,7 @@ const GifContainer = () => {
     setLoader(true);
   };
 
+  // The Search function where gifs are fetched
   const search = async () => {
     setIsGifLoaded(false);
     if (!searchData) {
@@ -55,13 +67,14 @@ const GifContainer = () => {
       return;
     }
     animate();
-    const { data: gifs } = await gf.search(searchData, { limit: 25 });
+    const { data: gifs } = await gf.search(searchData, { limit: 90 });
     setGif(gifs);
     console.log(gifs);
     setLoader(false);
     setIsGifLoaded(true);
   };
 
+  // The loadmore function which is for loading more gifs
   const loadmore = async () => {
     const { data: gifs } = await gf.search(searchData, {
       limit: 25,
@@ -72,6 +85,7 @@ const GifContainer = () => {
     setGifloadmore(gifloadmore + 1);
   };
 
+  // Like for saving the favourite
   const like = async (link: string) => {
     try {
       if (user.saved.includes(link)) {
@@ -114,17 +128,18 @@ const GifContainer = () => {
     console.log(user);
   };
 
+  // Hot Search
   useEffect(() => {
     const getData = setTimeout(async () => {
       search();
-    }, 1700);
+    }, 1300);
 
     return () => clearTimeout(getData);
   }, [searchData]);
 
   return (
-    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-20">
-      {contextHolder}
+    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24">
+      {contextHolder} {/* for the message box rendering context */}
       <motion.div
         layout
         className={`container ${
@@ -133,11 +148,10 @@ const GifContainer = () => {
           isGifLoaded ? "gap-10" : ""
         } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative -mt-9`}
       >
-        {contextHolder}
-
         {!animated && (
-          <div className="bottomtext absolute -bottom-9 text-xs md:text-sm text-black text-opacity-40 font-medium ">
-            Search Whatever, There are Infinity GIFs
+          <div className="bottomtext absolute -bottom-20 text-xs md:text-sm text-black text-opacity-40 font-medium flex items-center flex-col">
+            Search Whatever, There are Infinite GIFs
+            <div className="footer mb-2 font-medium">Made by <a href="https://tanmay-kumar.netlify.app/" target="_blank" className="text-blue-500">Tanmay</a></div>
           </div>
         )}
         <motion.div
@@ -165,7 +179,7 @@ const GifContainer = () => {
               layout="preserve-aspect"
               ref={inputRef}
               type="text"
-              placeholder="Search Anything"
+              placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
           </motion.div>
@@ -193,9 +207,16 @@ const GifContainer = () => {
           {isGifLoaded && (
             <div className="flex flex-col gap-6">
               <div className="flex gap-5 flex-wrap items-center justify-center">
-                {gif?.map((gif, index) => (
-                  <GifImage key={index} like={like} gif={gif} isSaved={false} />
-                ))}
+                {gif
+                  .slice(page * pageSize - pageSize, page * pageSize)
+                  ?.map((gif, index) => (
+                    <GifImage
+                      key={index}
+                      like={like}
+                      gif={gif}
+                      isSaved={false}
+                    />
+                  ))}
               </div>
               <div
                 className="loadmore p-2 px-4 rounded-md bg-black self-center text-white cursor-pointer"
@@ -203,6 +224,16 @@ const GifContainer = () => {
               >
                 Load More
               </div>
+              <Pagination
+                defaultCurrent={1}
+                total={gif.length}
+                defaultPageSize={18}
+                className="w-full flex items-center justify-center"
+                onChange={(page, pageSize) => {
+                  setPage(page);
+                  setPaseSize(pageSize);
+                }}
+              />
             </div>
           )}
         </motion.div>

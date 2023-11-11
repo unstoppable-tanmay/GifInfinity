@@ -20,6 +20,7 @@ import { NoticeType } from "antd/es/message/interface";
 import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { auth, db } from "@/helpers/firebase";
 import GifImage from "./GifImage";
+import Image from "next/image";
 
 const Navbar = () => {
   const { isUser, user, setIsUser, setUser, mainLoading, setMainLoading } =
@@ -270,7 +271,9 @@ const Navbar = () => {
               <div className="name text-lg cursor-pointer leading-none -mt-[4px] font-medium">
                 {user.name}
               </div>
-              <div className="border-right-top image w-[40px] h-[40px] rounded-full cursor-pointer bg-white border-black flex items-center justify-center text-2xl font-semibold"></div>
+              <div className=" image w-[40px] h-[40px] rounded-full cursor-pointer bg-white border-black border flex items-center justify-center text-2xl font-semibold relative overflow-hidden">
+                <Image src={'/images/profile.gif'} alt="" fill className="object-cover"></Image>
+              </div>
             </div>
             {/* </a> */}
           </Dropdown>
@@ -280,7 +283,7 @@ const Navbar = () => {
               onClick={() => {
                 setSignin(true);
               }}
-              className="p-3 px-6 rounded-full bg-white shadow-sm"
+              className="p-3 px-4 rounded-full bg-white shadow-sm"
             >
               Signup
             </span>
@@ -288,7 +291,7 @@ const Navbar = () => {
               onClick={() => {
                 setLogin(true);
               }}
-              className="p-3 px-6 rounded-full bg-white shadow-sm"
+              className="p-3 px-4 rounded-full bg-white shadow-sm"
             >
               Login
             </span>

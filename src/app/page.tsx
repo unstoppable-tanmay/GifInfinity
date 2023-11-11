@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import useUser from "./store/useUser";
 import { Spin } from "antd";
 import { getDoc, doc } from "@firebase/firestore";
+import TrendingComp from "@/components/TrendingComp";
 
 export default function Home() {
   const { setIsUser, setUser, mainLoading, setMainLoading, user } = useUser();
@@ -38,10 +39,10 @@ export default function Home() {
 
   return (
     <main className="w-screen min-h-screen flex items-center justify-start flex-col overflow-x-hidden">
-      <Spin spinning={mainLoading} fullscreen />
-      <Navbar />
-      <GifContainer />
-      {/* <TrendingComp/> */}
+      <Spin spinning={mainLoading} fullscreen /> {/* The Component For The Loading The screen initially */}
+      <Navbar /> {/* The Component For Auth and other stuffs */}
+      <GifContainer /> {/* The Component For The Searching the GIFS */}
+      <TrendingComp/> {/* The Component For The Trending GIF shows in lsst */}
     </main>
   );
 }
