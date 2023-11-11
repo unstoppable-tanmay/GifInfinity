@@ -5,6 +5,13 @@ import { delay } from "../helpers/utils";
 import { message } from "antd";
 
 import useUser from "@/app/store/useUser";
+import { GifResult, GiphyFetch } from "@giphy/js-fetch-api";
+import { NoticeType } from "antd/es/message/interface";
+import { doc, setDoc, updateDoc } from "@firebase/firestore";
+import { db } from "@/helpers/firebase";
+import GifImage from "./GifImage";
+
+const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 
 const GifContainer = () => {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,8 +22,18 @@ const GifContainer = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const [searchData, setSearchData] = useState("");
+  const [gif, setGif] = useState<any[]>([]);
+  const [isGifLoaded, setIsGifLoaded] = useState(false);
+  const [gifloadmore, setGifloadmore] = useState(1);
 
-  const {isUser} = useUser()
+  const { isUser, user, setUser } = useUser();
+
+  const OpenMessage = (type: NoticeType, content: string) => {
+    messageApi.open({
+      type: type,
+      content: content,
+    });
+  };
 
   const animate = async () => {
     setAnimated(true);
@@ -25,29 +42,84 @@ const GifContainer = () => {
     setLoader(true);
   };
 
-  const search = () => {
+  const search = async () => {
+    setIsGifLoaded(false);
     if (!searchData) {
-      messageApi.open({
-        type: "error",
-        content: "Type Anything In The Box",
-      });
+      OpenMessage("error", "Type Anything In The Box");
       return;
-    }
-    else if(!isUser){
-      messageApi.open({
-        type: "error",
-        content: "Please Sign In to Search",
-      });
+    } else if (!isUser) {
+      OpenMessage("error", "Please Sign In to Search");
       return;
     }
     animate();
+    const { data: gifs } = await gf.search(searchData, { limit: 25 });
+    setGif(gifs);
+    console.log(gifs);
+    setLoader(false);
+    setIsGifLoaded(true);
   };
+
+  const loadmore = async () => {
+    const { data: gifs } = await gf.search(searchData, {
+      limit: 25,
+      offset: 25 * gifloadmore,
+    });
+    setGif([...gif, ...gifs]);
+    console.log(gifs);
+    setGifloadmore(gifloadmore + 1);
+  };
+
+  const like = async (link: string) => {
+    try {
+      if (user.saved.includes(link)) {
+        const newsaved = user.saved.filter((ele) => ele != link);
+        await updateDoc(doc(db, "user", user.uid), {
+          saved: newsaved,  
+        })
+          .then(() => {
+            setUser({
+              saved: newsaved,
+              name: user.name,
+              email: user.email,
+              uid: user.uid,
+            });
+            OpenMessage("success", "Gif Removed From Liked");
+          })
+          .catch((e) => {
+            OpenMessage("error", e.message);
+          });
+      } else {
+        await updateDoc(doc(db, "user", user.uid), {
+          saved: [...user.saved, link],
+        })
+          .then(() => {
+            setUser({
+              saved: [...user.saved, link],
+              name: user.name,
+              email: user.email,
+              uid: user.uid,
+            });
+            OpenMessage("success", "Liked The Gif");
+          })
+          .catch((e) => {
+            OpenMessage("error", e.message);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(user);
+  };
+
   return (
-    <div className="wrapper flex items-center justify-center flex-1">
+    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-20">
+      {contextHolder}
       <motion.div
         layout
         className={`container ${
           animated ? "w-[90vw] min-h-[80vh]" : "w-[750px]"
+        } ${
+          isGifLoaded ? "gap-10" : ""
         } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative -mt-9`}
       >
         {contextHolder}
@@ -106,6 +178,21 @@ const GifContainer = () => {
           className="gifcontainer flex items-center justify-center"
         >
           {loader && <motion.div layout className="loader"></motion.div>}
+          {isGifLoaded && (
+            <div className="flex flex-col gap-6">
+              <div className="flex gap-5 flex-wrap items-center justify-center">
+                {gif?.map((gif, index) => (
+                  <GifImage key={index} like={like} gif={gif} isSaved={false} />
+                ))}
+              </div>
+              <div
+                className="loadmore p-2 px-4 rounded-md bg-black self-center text-white cursor-pointer"
+                onClick={loadmore}
+              >
+                Load More
+              </div>
+            </div>
+          )}
         </motion.div>
       </motion.div>
     </div>

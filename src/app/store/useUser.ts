@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 type user = {
+  uid:string
   name: string;
   email: string;
   saved: string[];
@@ -18,7 +19,7 @@ interface UserType {
 const useUser = create<UserType>((set) => ({
   mainLoading: true,
   isUser: false,
-  user: { name: "", email: "", saved: [] },
+  user: { uid:"",name: "", email: "", saved: [] },
   setUser: (data) => set({ user: data }),
   setIsUser: (data: boolean) =>
     set({
@@ -28,13 +29,3 @@ const useUser = create<UserType>((set) => ({
 }));
 
 export default useUser;
-
-// import dynamic from 'next/dynamic';
-
-// const ClientOnly = (props: { children: React.ReactNode }) => {
-//   return props.children;
-// };
-
-// export default dynamic(() => Promise.resolve(ClientOnly), {
-//   ssr: false,
-// });

@@ -6,25 +6,18 @@ import { auth, db } from "@/helpers/firebase";
 import { useEffect } from "react";
 import useUser from "./store/useUser";
 import { Spin } from "antd";
-import {
-  collection,
-  getDocs,
-  getDoc,
-  where,
-  query,
-  limit,
-  doc,
-} from "@firebase/firestore";
+import { getDoc, doc } from "@firebase/firestore";
 
 export default function Home() {
-  const { setIsUser, setUser, mainLoading, setMainLoading } = useUser();
-  
+  const { setIsUser, setUser, mainLoading, setMainLoading, user } = useUser();
+
   const getUserData = async (uid: string) => {
     const docRef = doc(db, "user", uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       const userData = docSnap.data();
       setUser({
+        uid: userData.uid,
         name: userData.name,
         email: userData.email,
         saved: userData.saved,
@@ -35,8 +28,10 @@ export default function Home() {
   };
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
-      user && setIsUser(true);
-      user && getUserData(user?.uid!);
+      if (user) {
+        setIsUser(true);
+        getUserData(user?.uid!);
+      }
       setMainLoading(false);
     });
   }, []);
@@ -46,6 +41,7 @@ export default function Home() {
       <Spin spinning={mainLoading} fullscreen />
       <Navbar />
       <GifContainer />
+      {/* <TrendingComp/> */}
     </main>
   );
 }

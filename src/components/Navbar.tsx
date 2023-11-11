@@ -4,7 +4,6 @@ import { Drawer, Dropdown, Input, MenuProps, Modal, Spin, message } from "antd";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  getAuth,
 } from "firebase/auth";
 
 import {
@@ -16,8 +15,9 @@ import {
   LogoutOutlined,
 } from "@ant-design/icons";
 import { NoticeType } from "antd/es/message/interface";
-import { addDoc, collection, doc, getDoc, setDoc } from "@firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "@firebase/firestore";
 import { auth, db } from "@/helpers/firebase";
+import GifImage from "./GifImage";
 
 const Navbar = () => {
   const { isUser, user, setIsUser, setUser, mainLoading, setMainLoading } =
@@ -25,6 +25,7 @@ const Navbar = () => {
   const [signin, setSignin] = useState(false);
   const [login, setLogin] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [opensaved,setOpensaved] = useState(false)
 
   const [userData, setUserData] = useState({
     name: "",
@@ -45,6 +46,7 @@ const Navbar = () => {
     if (docSnap.exists()) {
       const userData = docSnap.data();
       setUser({
+        uid: userData.uid,
         name: userData.name,
         email: userData.email,
         saved: userData.saved,
@@ -95,12 +97,14 @@ const Navbar = () => {
           console.log(data);
           try {
             await setDoc(doc(db, "user", data.user.uid), {
+              uid: data.user.uid,
               name: userData.name,
               email: userData.email,
               saved: [],
             })
-              .then((data) => {
+              .then(() => {
                 setUser({
+                  uid: data.user.uid,
                   name: userData.name,
                   email: userData.email,
                   saved: [],
@@ -147,11 +151,55 @@ const Navbar = () => {
       OpenMessage("error", "Some Error Occured");
     }
   };
+  
+  const like = async (link: string) => {
+    try {
+      if (user.saved.includes(link)) {
+        const newsaved = user.saved.filter((ele) => ele != link);
+        await updateDoc(doc(db, "user", user.uid), {
+          saved: newsaved,  
+        })
+          .then(() => {
+            setUser({
+              saved: newsaved,
+              name: user.name,
+              email: user.email,
+              uid: user.uid,
+            });
+            OpenMessage("success", "Gif Removed From Liked");
+          })
+          .catch((e) => {
+            OpenMessage("error", e.message);
+          });
+      } else {
+        await updateDoc(doc(db, "user", user.uid), {
+          saved: [...user.saved, link],
+        })
+          .then(() => {
+            setUser({
+              saved: [...user.saved, link],
+              name: user.name,
+              email: user.email,
+              uid: user.uid,
+            });
+            OpenMessage("success", "Liked The Gif");
+          })
+          .catch((e) => {
+            OpenMessage("error", e.message);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(user);
+  };
+
 
   const items: MenuProps["items"] = [
     {
       label: "Saved GIFs",
       key: "1",
+      onClick: ()=>{setOpensaved(true)}
     },
     {
       label: "Reset password",
@@ -181,7 +229,7 @@ const Navbar = () => {
           <Dropdown menu={{ items }} trigger={["click"]} className="mr-2">
             <div className="flex gap-2 items-center justify-center">
               <div className="name text-lg cursor-pointer leading-none -mt-[4px] font-medium">
-                {user.name || "Tanmay"}
+                {user.name}
               </div>
               <div className="border-right-top image w-[40px] h-[40px] rounded-full cursor-pointer bg-white border-black flex items-center justify-center text-2xl font-semibold"></div>
             </div>
@@ -207,7 +255,7 @@ const Navbar = () => {
             </span>
           </div>
         )}
-
+        {/* Sign up */}
         <Modal
           title="Sign Up"
           open={signin}
@@ -266,6 +314,7 @@ const Navbar = () => {
             />
           </div>
         </Modal>
+        {/* login */}
         <Modal
           title="Log In"
           open={login}
@@ -309,6 +358,27 @@ const Navbar = () => {
               }}
             />
           </div>
+        </Modal>
+
+        {/* Saved */}
+        
+        <Modal
+          title="Saved Gifs"
+          open={opensaved}
+          centered
+          width={"80vw"}
+          onCancel={() => {
+            setOpensaved(false);
+          }}
+          footer
+          // okButtonProps={{ style: { background: "#4096ff" } }}
+          // okText="Close"
+        >
+         <div className="flex gap-5 flex-wrap items-center justify-center">
+                {user.saved.map((gif, index) => (
+                  <GifImage key={index} like={like} gif={gif} isSaved />
+                ))}
+              </div>
         </Modal>
       </div>
     </>
