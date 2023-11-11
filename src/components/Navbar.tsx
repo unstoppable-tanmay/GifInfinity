@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import useUser from "../app/store/useUser";
-import { Drawer, Dropdown, Input, MenuProps, Modal, Spin, message } from "antd";
+import { Dropdown, Input, MenuProps, Modal, Spin, message } from "antd";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updatePassword,
+  updateEmail,
 } from "firebase/auth";
 
 import {
@@ -24,8 +26,11 @@ const Navbar = () => {
     useUser();
   const [signin, setSignin] = useState(false);
   const [login, setLogin] = useState(false);
+  const [updatepassword, setUpdatepassword] = useState(false);
+  const [updateemail, setUpdateemail] = useState(false);
+  const [opensaved, setOpensaved] = useState(false);
+
   const [messageApi, contextHolder] = message.useMessage();
-  const [opensaved,setOpensaved] = useState(false)
 
   const [userData, setUserData] = useState({
     name: "",
@@ -151,13 +156,40 @@ const Navbar = () => {
       OpenMessage("error", "Some Error Occured");
     }
   };
-  
+  const UpdateEmail = (email: string) => {
+    try {
+      updateEmail(auth.currentUser!, email)
+        .then(() => {
+          OpenMessage("success", "Email Changed Succesfully");
+          setUpdateemail(false);
+        })
+        .catch((e) => {
+          OpenMessage("error", e.message);
+        });
+    } catch (e) {
+      OpenMessage("error", "Some Error Occured");
+    }
+  };
+  const UpdatePassword = (password: string) => {
+    try {
+      updatePassword(auth.currentUser!, password)
+        .then(() => {
+          OpenMessage("success", "Password Succesfully Updated");
+          setUpdatepassword(false);
+        })
+        .catch((e) => {
+          OpenMessage("error", e.message);
+        });
+    } catch (e) {
+      OpenMessage("error", "Some Error Occured");
+    }
+  };
   const like = async (link: string) => {
     try {
       if (user.saved.includes(link)) {
         const newsaved = user.saved.filter((ele) => ele != link);
         await updateDoc(doc(db, "user", user.uid), {
-          saved: newsaved,  
+          saved: newsaved,
         })
           .then(() => {
             setUser({
@@ -194,20 +226,27 @@ const Navbar = () => {
     console.log(user);
   };
 
-
   const items: MenuProps["items"] = [
     {
       label: "Saved GIFs",
       key: "1",
-      onClick: ()=>{setOpensaved(true)}
+      onClick: () => {
+        setOpensaved(true);
+      },
     },
     {
-      label: "Reset password",
+      label: "Update Email",
       key: "2",
+      onClick: () => {
+        setUpdateemail(true);
+      },
     },
     {
-      label: "Forgot Password",
+      label: "Update Password",
       key: "3",
+      onClick: () => {
+        setUpdatepassword(true);
+      },
     },
     {
       label: "Log out",
@@ -222,7 +261,7 @@ const Navbar = () => {
       <Spin spinning={mainLoading} fullscreen />
       {contextHolder}
       <div className="Nav w-full flex items-center justify-between px-6 py-3">
-        <div className="logo font-semibold text-2xl leading-none">
+        <div className="logo font-semibold text-2xl leading-none cursor-pointer">
           GIFInfinity
         </div>
         {isUser ? (
@@ -359,9 +398,71 @@ const Navbar = () => {
             />
           </div>
         </Modal>
+        {/* Password Update */}
+        <Modal
+          title="Update Password"
+          open={updatepassword}
+          centered
+          width={400}
+          onOk={() => UpdatePassword(userData.password)}
+          onCancel={() => {
+            setUpdatepassword(false);
+          }}
+          okButtonProps={{ style: { background: "#4096ff" } }}
+          okText="Update"
+        >
+          <div className="Login flex flex-col gap-3 py-3">
+            <Input.Password
+              placeholder="Password"
+              size="large"
+              prefix={<KeyOutlined />}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+              }
+              value={userData.password}
+              onChange={(data) => {
+                setUserData({
+                  name: userData.name,
+                  email: userData.email,
+                  password: data.target.value,
+                });
+              }}
+            />
+          </div>
+        </Modal>
+        {/* Email Update */}
+        <Modal
+          title="Update Email"
+          open={updateemail}
+          centered
+          width={400}
+          onOk={() => {
+            UpdateEmail(userData.email);
+          }}
+          onCancel={() => {
+            setUpdateemail(false);
+          }}
+          okButtonProps={{ style: { background: "#4096ff" } }}
+          okText="Update"
+        >
+          <div className="Login flex flex-col gap-3 py-3">
+            <Input
+              placeholder="Email"
+              size="large"
+              prefix={<MailOutlined />}
+              value={userData.email}
+              onChange={(data) => {
+                setUserData({
+                  name: userData.name,
+                  email: data.target.value,
+                  password: userData.password,
+                });
+              }}
+            />
+          </div>
+        </Modal>
 
         {/* Saved */}
-        
         <Modal
           title="Saved Gifs"
           open={opensaved}
@@ -374,11 +475,11 @@ const Navbar = () => {
           // okButtonProps={{ style: { background: "#4096ff" } }}
           // okText="Close"
         >
-         <div className="flex gap-5 flex-wrap items-center justify-center">
-                {user.saved.map((gif, index) => (
-                  <GifImage key={index} like={like} gif={gif} isSaved />
-                ))}
-              </div>
+          <div className="flex gap-5 flex-wrap items-center justify-center">
+            {user.saved.map((gif, index) => (
+              <GifImage key={index} like={like} gif={gif} isSaved />
+            ))}
+          </div>
         </Modal>
       </div>
     </>

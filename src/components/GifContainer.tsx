@@ -1,13 +1,13 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { delay } from "../helpers/utils";
 import { message } from "antd";
 
 import useUser from "@/app/store/useUser";
-import { GifResult, GiphyFetch } from "@giphy/js-fetch-api";
+import { GiphyFetch } from "@giphy/js-fetch-api";
 import { NoticeType } from "antd/es/message/interface";
-import { doc, setDoc, updateDoc } from "@firebase/firestore";
+import { doc, updateDoc } from "@firebase/firestore";
 import { db } from "@/helpers/firebase";
 import GifImage from "./GifImage";
 
@@ -45,6 +45,9 @@ const GifContainer = () => {
   const search = async () => {
     setIsGifLoaded(false);
     if (!searchData) {
+      setAnimated(false);
+      setLoader(false);
+      setIsGifLoaded(false);
       OpenMessage("error", "Type Anything In The Box");
       return;
     } else if (!isUser) {
@@ -74,7 +77,7 @@ const GifContainer = () => {
       if (user.saved.includes(link)) {
         const newsaved = user.saved.filter((ele) => ele != link);
         await updateDoc(doc(db, "user", user.uid), {
-          saved: newsaved,  
+          saved: newsaved,
         })
           .then(() => {
             setUser({
@@ -111,6 +114,14 @@ const GifContainer = () => {
     console.log(user);
   };
 
+  useEffect(() => {
+    const getData = setTimeout(async () => {
+      search();
+    }, 1700);
+
+    return () => clearTimeout(getData);
+  }, [searchData]);
+
   return (
     <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-20">
       {contextHolder}
@@ -126,7 +137,7 @@ const GifContainer = () => {
 
         {!animated && (
           <div className="bottomtext absolute -bottom-9 text-xs md:text-sm text-black text-opacity-40 font-medium ">
-            Search What Can You Do, We Have Infinity
+            Search Whatever, There are Infinity GIFs
           </div>
         )}
         <motion.div
@@ -158,7 +169,8 @@ const GifContainer = () => {
               className="outline-none border-none flex-1 bg-transparent"
             />
           </motion.div>
-          <motion.div
+          {/* If You need search btn */}
+          {/* <motion.div
             layout
             className="search p-2 md:p-4 md:px-8 md:text-lg bg-black rounded-2xl text-white cursor-pointer select-none"
             onClick={search}
@@ -170,7 +182,7 @@ const GifContainer = () => {
               alt="🔍"
             />
             <span className="hidden md:flex">Search</span>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
         <motion.div
