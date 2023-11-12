@@ -11,7 +11,7 @@ const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 
 const TrendingComp = () => {
   const [gif, setGif] = useState<any[]>([]);
-  const { user, setUser } = useUser();
+  const { isUser,user, setUser } = useUser();
 
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -29,7 +29,7 @@ const TrendingComp = () => {
 
   const like = async (link: string) => {
     try {
-      if(!user){
+      if(!isUser){
         OpenMessage("error", "Signin to Save");
         return
       }
@@ -78,7 +78,8 @@ const TrendingComp = () => {
   })
 
   return (
-    <div className="w-[90vw] md:w-[70vw] p-2 flex items-center flex-col rounded-lg bg-white  mb-10 gap-10 overflow-hidden">
+    <div className="w-[90vw] md:w-[70vw] p-2 flex items-center flex-col rounded-lg bg-white  my-10 py-7 gap-6 overflow-hidden">
+    {contextHolder} {/* for the message box rendering context */}
       <div className="heading text-3xl font-medium">Trending</div>
       <div className="flex gap-5 flex-wrap items-center justify-center">
         {gif?.map((gif, index) => (

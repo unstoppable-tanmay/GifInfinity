@@ -16,6 +16,7 @@ import { CloseOutlined } from "@ant-design/icons";
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 
 const GifContainer = () => {
+  const Limit = 20;
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Animation states
@@ -33,7 +34,7 @@ const GifContainer = () => {
 
   // Page size for pagination
   const [page, setPage] = useState(1);
-  const [pageSize, setPaseSize] = useState(18);
+  const [pageSize, setPaseSize] = useState(20);
 
   const { isUser, user, setUser } = useUser(); // the user store
 
@@ -59,7 +60,7 @@ const GifContainer = () => {
       setAnimated(false);
       setLoader(false);
       setIsGifLoaded(false);
-      OpenMessage("error", "Type Anything In The Box");
+      OpenMessage("info", "Type Anything In The Box");
       return;
     } else if (!isUser) {
       OpenMessage("error", "Please Sign In to Search");
@@ -69,26 +70,29 @@ const GifContainer = () => {
     if (gifs.length == 0) {
       OpenMessage("info", "No Gifs Found");
       setAnimated(false);
-      setLoader(false);
-      setIsGifLoaded(false);
       return;
     } else {
       animate();
       setGif(gifs);
-      setLoader(false);
-      setIsGifLoaded(true);
     }
+    setLoader(false);
+    setIsGifLoaded(true);
   };
 
   // The loadmore function which is for loading more gifs
   const loadmore = async () => {
-    const { data: gifs } = await gf.search(searchData, {
-      limit: 25,
-      offset: 25 * gifloadmore,
-    });
-    setGif([...gif, ...gifs]);
-    console.log(gifs);
-    setGifloadmore(gifloadmore + 1);
+    if(gifloadmore<=3){
+      const { data: gifs } = await gf.search(searchData, {
+        limit: Limit,
+        offset: Limit * gifloadmore,
+      });
+      setGif([...gif, ...gifs]);
+      console.log(gifs);
+      setGifloadmore(gifloadmore + 1);
+    }
+    else{
+      OpenMessage('error',"There Is No Gif Left")
+    }
   };
 
   // Like for saving the favourite
@@ -250,7 +254,7 @@ const GifContainer = () => {
               <Pagination
                 defaultCurrent={1}
                 total={gif.length}
-                defaultPageSize={18}
+                defaultPageSize={20}
                 className="w-full flex items-center justify-center"
                 onChange={(page, pageSize) => {
                   setPage(page);
