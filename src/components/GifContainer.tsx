@@ -64,6 +64,7 @@ const GifContainer = () => {
       return;
     } else if (!isUser) {
       OpenMessage("error", "Please Sign In to Search");
+      setSearchData("");
       return;
     }
     const { data: gifs } = await gf.search(searchData, { limit: 90 });
@@ -146,6 +147,14 @@ const GifContainer = () => {
 
     return () => clearTimeout(getData);
   }, [searchData]);
+
+  useEffect(()=>{
+    setAnimated(false)
+    setGif([])  
+    setLoader(false)
+    setIsGifLoaded(false)
+    setSearchData("")
+  },[isUser])
 
   return (
     <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24 relative">
