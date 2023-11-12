@@ -10,6 +10,7 @@ import { NoticeType } from "antd/es/message/interface";
 import { doc, updateDoc } from "@firebase/firestore";
 import { db } from "@/helpers/firebase";
 import GifImage from "./GifImage";
+import { CloseOutlined } from "@ant-design/icons";
 
 // the giphyfetch instance
 const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
@@ -65,18 +66,18 @@ const GifContainer = () => {
       return;
     }
     const { data: gifs } = await gf.search(searchData, { limit: 90 });
-    if(gifs.length==0){
-      OpenMessage("info","No Gifs Found")
+    if (gifs.length == 0) {
+      OpenMessage("info", "No Gifs Found");
       setAnimated(false);
       setLoader(false);
       setIsGifLoaded(false);
-      return
+      return;
+    } else {
+      animate();
+      setGif(gifs);
+      setLoader(false);
+      setIsGifLoaded(true);
     }
-    animate();
-    setGif(gifs);
-    console.log(gifs);
-    setLoader(false);
-    setIsGifLoaded(true);
   };
 
   // The loadmore function which is for loading more gifs
@@ -137,13 +138,13 @@ const GifContainer = () => {
   useEffect(() => {
     const getData = setTimeout(async () => {
       search();
-    }, 1300);
+    }, 800);
 
     return () => clearTimeout(getData);
   }, [searchData]);
 
   return (
-    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24">
+    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24 relative">
       {contextHolder} {/* for the message box rendering context */}
       <motion.div
         layout
@@ -197,6 +198,7 @@ const GifContainer = () => {
               placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
+            <CloseOutlined className="cursor-pointer" onClick={()=>{setSearchData("")}}/>
           </motion.div>
           {/* If You need search btn */}
           {/* <motion.div

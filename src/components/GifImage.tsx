@@ -15,7 +15,6 @@ const GifImage = ({
   const { user, setUser } = useUser();
   const [color, setColor] = useState(false);
   const [hovered, setHovered] = useState(false);
-  console.log(gif)
 
   useEffect(() => {
     if (user.saved.includes(isSaved ? gif : gif.images.fixed_height.url)) {

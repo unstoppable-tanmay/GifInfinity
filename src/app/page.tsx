@@ -35,7 +35,7 @@ export default function Home() {
       }
       setMainLoading(false);
     });
-  },[]);
+  }, []);
 
   return (
     <main className="w-screen min-h-screen flex items-center justify-start flex-col overflow-x-hidden">

@@ -117,10 +117,6 @@ Not supports in Firefox and IE */
 
 
 
-
-
-
-
 .change-color-to-wellow {
   filter: invert(94%) sepia(16%) saturate(6129%) hue-rotate(334deg) brightness(106%) contrast(103%);
 }
