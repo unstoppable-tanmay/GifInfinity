@@ -25,6 +25,9 @@
 5. giphy fetch api
 6. next
 
+# Env Instruction
+>The keys and values needed are not there please create a local env file and put there the required details like firebase details and giphy api key
+
 
 # Some Screenshots
 ![Alt text](image.png)

@@ -475,6 +475,7 @@ const Navbar = () => {
             setOpensaved(false);
           }}
           footer
+          style={{marginTop: "10vh"}}
           // okButtonProps={{ style: { background: "#4096ff" } }}
           // okText="Close"
         >
