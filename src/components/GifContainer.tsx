@@ -19,7 +19,6 @@ const GifContainer = () => {
 
   // Animation states
   const [animated, setAnimated] = useState(false);
-  const [closed, setClosed] = useState(false);
   const [loader, setLoader] = useState(false);
 
   // message api of antd
@@ -49,7 +48,6 @@ const GifContainer = () => {
   const animate = async () => {
     setAnimated(true);
     await delay(300);
-    setClosed(true);
     setLoader(true);
   };
 

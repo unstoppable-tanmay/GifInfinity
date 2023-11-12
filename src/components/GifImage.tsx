@@ -15,6 +15,7 @@ const GifImage = ({
   const { user, setUser } = useUser();
   const [color, setColor] = useState(false);
   const [hovered, setHovered] = useState(false);
+  console.log(gif)
 
   useEffect(() => {
     if (user.saved.includes(isSaved ? gif : gif.images.fixed_height.url)) {
@@ -51,7 +52,7 @@ const GifImage = ({
       <motion.div
         initial={{ opacity: 0, pointerEvents: "none" }}
         animate={hovered ? { opacity: 1, pointerEvents: "all" } : {}}
-        className="hovershare absolute w-full h-full bg-black bg-opacity-40 rounded-md z-10 flex items-center justify-center"
+        className="hovershare absolute w-full h-full bg-black bg-opacity-40 rounded-md z-10 flex flex-col items-center justify-center"
       >
         <div
           className="share p-2 px-4 rounded-full bg-white bg-opacity-75 cursor-pointer"
@@ -63,9 +64,10 @@ const GifImage = ({
         >
           Share
         </div>
+        {!isSaved&&<div className="name text-white font-semibold text-lg">{gif.title.split(' ').slice(0,2).join(' ')}</div>}
       </motion.div>
       <motion.img
-        className="w-[200px] h-[200px] rounded-md  object-cover bg-slate-400"
+        className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] rounded-md  object-cover bg-slate-400"
         src={isSaved ? gif : gif.images.fixed_height.url}
         alt="gif"
       />

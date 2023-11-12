@@ -29,6 +29,10 @@ const TrendingComp = () => {
 
   const like = async (link: string) => {
     try {
+      if(!user){
+        OpenMessage("error", "Signin to Save");
+        return
+      }
       if (user.saved.includes(link)) {
         const newsaved = user.saved.filter((ele) => ele != link);
         await updateDoc(doc(db, "user", user.uid), {
@@ -74,7 +78,7 @@ const TrendingComp = () => {
   })
 
   return (
-    <div className="w-[90vw] p-5 flex items-center flex-col rounded-lg bg-white  mb-10 gap-10">
+    <div className="w-[90vw] p-2 flex items-center flex-col rounded-lg bg-white  mb-10 gap-10">
       <div className="heading text-3xl font-medium">Trending</div>
       <div className="flex gap-5 flex-wrap items-center justify-center">
         {gif?.map((gif, index) => (

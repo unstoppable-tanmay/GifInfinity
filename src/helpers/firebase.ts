@@ -1,15 +1,11 @@
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   getAuth,
 } from "firebase/auth";
-import firebase_app,{firebaseConfig} from "../firebase/config";
-import { initializeApp } from "firebase/app";
-import {  collection, doc, getFirestore } from "firebase/firestore";
+import firebase_app from "../firebase/config";
 
-const app = initializeApp(firebaseConfig);
+import { getFirestore } from "firebase/firestore";
 
-const db = getFirestore(app);
+const db = getFirestore(firebase_app);
 
 const auth = getAuth(firebase_app);
 

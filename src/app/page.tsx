@@ -35,14 +35,15 @@ export default function Home() {
       }
       setMainLoading(false);
     });
-  }, []);
+  },[]);
 
   return (
     <main className="w-screen min-h-screen flex items-center justify-start flex-col overflow-x-hidden">
-      <Spin spinning={mainLoading} fullscreen /> {/* The Component For The Loading The screen initially */}
+      <Spin spinning={mainLoading} fullscreen />{" "}
+      {/* The Component For The Loading The screen initially */}
       <Navbar /> {/* The Component For Auth and other stuffs */}
       <GifContainer /> {/* The Component For The Searching the GIFS */}
-      <TrendingComp/> {/* The Component For The Trending GIF shows in lsst */}
+      <TrendingComp /> {/* The Component For The Trending GIF shows in lsst */}
     </main>
   );
 }
