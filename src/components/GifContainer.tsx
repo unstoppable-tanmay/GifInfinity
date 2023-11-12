@@ -34,7 +34,7 @@ const GifContainer = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPaseSize] = useState(18);
 
-  const { isUser, user, setUser } = useUser(); // the user store 
+  const { isUser, user, setUser } = useUser(); // the user store
 
   // Function For Calling The message in ANTD
   const OpenMessage = (type: NoticeType, content: string) => {
@@ -64,8 +64,15 @@ const GifContainer = () => {
       OpenMessage("error", "Please Sign In to Search");
       return;
     }
-    animate();
     const { data: gifs } = await gf.search(searchData, { limit: 90 });
+    if(gifs.length==0){
+      OpenMessage("info","No Gifs Found")
+      setAnimated(false);
+      setLoader(false);
+      setIsGifLoaded(false);
+      return
+    }
+    animate();
     setGif(gifs);
     console.log(gifs);
     setLoader(false);
@@ -149,7 +156,16 @@ const GifContainer = () => {
         {!animated && (
           <div className="bottomtext absolute -bottom-20 text-xs md:text-sm text-black text-opacity-40 font-medium flex items-center flex-col">
             Search Whatever, There are Infinite GIFs
-            <div className="footer mb-2 font-medium">Made by <a href="https://tanmay-kumar.netlify.app/" target="_blank" className="text-blue-500">Tanmay</a></div>
+            <div className="footer mb-2 font-medium">
+              Made by{" "}
+              <a
+                href="https://tanmay-kumar.netlify.app/"
+                target="_blank"
+                className="text-blue-500"
+              >
+                Tanmay
+              </a>
+            </div>
           </div>
         )}
         <motion.div
@@ -206,16 +222,22 @@ const GifContainer = () => {
           {isGifLoaded && (
             <div className="flex flex-col gap-6">
               <div className="flex gap-5 flex-wrap items-center justify-center">
-                {gif
-                  .slice(page * pageSize - pageSize, page * pageSize)
-                  ?.map((gif, index) => (
-                    <GifImage
-                      key={index}
-                      like={like}
-                      gif={gif}
-                      isSaved={false}
-                    />
-                  ))}
+                {gif.length != 0 ? (
+                  gif
+                    .slice(page * pageSize - pageSize, page * pageSize)
+                    ?.map((gif, index) => (
+                      <GifImage
+                        key={index}
+                        like={like}
+                        gif={gif}
+                        isSaved={false}
+                      />
+                    ))
+                ) : (
+                  <span className="text-black text-lg font-medium">
+                    No Gifs Found
+                  </span>
+                )}
               </div>
               <div
                 className="loadmore p-2 px-4 rounded-md bg-black self-center text-white cursor-pointer"
