@@ -26,7 +26,9 @@ const GifImage = ({
   }, [user]);
 
   return (
-    <div
+    <motion.div
+    initial={{opacity:0,translateY:"100px"}}
+    whileInView={{opacity:1,translateY:"0px"}}
       className="imgcontainer relative "
       onMouseEnter={() => {
         setHovered(true);
@@ -71,7 +73,7 @@ const GifImage = ({
         src={isSaved ? gif : gif.images.fixed_height.url}
         alt="gif"
       />
-    </div>
+    </motion.div>
   );
 };
 

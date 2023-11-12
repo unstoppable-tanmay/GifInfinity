@@ -315,6 +315,7 @@ const Navbar = () => {
             <Input
               placeholder="Name"
               size="large"
+              name="name"
               prefix={<UserOutlined />}
               value={userData.name}
               onChange={(data) => {
@@ -328,6 +329,7 @@ const Navbar = () => {
             <Input
               placeholder="Email"
               size="large"
+              name="email"
               prefix={<MailOutlined />}
               value={userData.email}
               onChange={(data) => {
@@ -341,6 +343,7 @@ const Navbar = () => {
             <Input.Password
               placeholder="Password"
               size="large"
+              name="password"
               prefix={<KeyOutlined />}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
@@ -373,6 +376,7 @@ const Navbar = () => {
             <Input
               placeholder="Email"
               size="large"
+              name="email"
               prefix={<MailOutlined />}
               value={userData.email}
               onChange={(data) => {
@@ -386,6 +390,7 @@ const Navbar = () => {
             <Input.Password
               placeholder="Password"
               size="large"
+              name="password"
               prefix={<KeyOutlined />}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
@@ -418,6 +423,7 @@ const Navbar = () => {
             <Input.Password
               placeholder="Password"
               size="large"
+              name="password"
               prefix={<KeyOutlined />}
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
@@ -452,6 +458,7 @@ const Navbar = () => {
             <Input
               placeholder="Email"
               size="large"
+              name="email"
               prefix={<MailOutlined />}
               value={userData.email}
               onChange={(data) => {

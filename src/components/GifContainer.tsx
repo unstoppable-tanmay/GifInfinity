@@ -141,7 +141,7 @@ const GifContainer = () => {
       <motion.div
         layout
         className={`container ${
-          animated ? "w-[90vw] min-h-[80vh]" : "w-[750px]"
+          animated ? "w-[90vw] md:w-[70vw] min-h-[80vh]" : "w-[750px]"
         } ${
           isGifLoaded ? "gap-10" : ""
         } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative -mt-9`}
@@ -177,6 +177,7 @@ const GifContainer = () => {
               layout="preserve-aspect"
               ref={inputRef}
               type="text"
+              name="search"
               placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
