@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { delay } from "../helpers/utils";
-import { Button, Pagination, message } from "antd";
+import { Button, Pagination, Spin, message } from "antd";
 
 import useUser from "@/app/store/useUser";
 import { GiphyFetch } from "@giphy/js-fetch-api";
@@ -50,11 +50,12 @@ const GifContainer = () => {
   const animate = async () => {
     setAnimated(true);
     await delay(300);
-    setLoader(true);
+    // setLoader(true);
   };
 
   // The Search function where gifs are fetched
   const search = async () => {
+    setLoader(true);
     setIsGifLoaded(false);
     if (!searchData) {
       setAnimated(false);
@@ -67,16 +68,18 @@ const GifContainer = () => {
       setSearchData("");
       return;
     }
-    const { data: gifs } = await gf.search(searchData, { limit: 90 });
+    const { data: gifs } = await gf.search(searchData, { limit: 60 });
     if (gifs.length == 0) {
       OpenMessage("info", "No Gifs Found");
       setAnimated(false);
       return;
     } else {
-      animate();
+      // animate();
+      setAnimated(true);
       setGif(gifs);
     }
     setLoader(false);
+    console.log(loader);
     setIsGifLoaded(true);
   };
 
@@ -87,6 +90,7 @@ const GifContainer = () => {
         limit: Limit,
         offset: Limit * gifloadmore,
       });
+      if (gifs.length == 0) OpenMessage("error", "No Gifs Left");
       setGif([...gif, ...gifs]);
       console.log(gifs);
       setGifloadmore(gifloadmore + 1);
@@ -140,6 +144,7 @@ const GifContainer = () => {
 
   // Hot Search
   useEffect(() => {
+    setLoader(true);
     const getData = setTimeout(async () => {
       search();
     }, 800);
@@ -214,12 +219,15 @@ const GifContainer = () => {
               placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
-            <CloseOutlined
-              className="cursor-pointer"
-              onClick={() => {
-                setSearchData("");
-              }}
-            />
+            {loader && <Spin />}
+            {searchData.length != 0 && (
+              <CloseOutlined
+                className="cursor-pointer"
+                onClick={() => {
+                  setSearchData("");
+                }}
+              />
+            )}
           </motion.div>
           {/* If You need search btn */}
           {/* <motion.div
@@ -242,7 +250,6 @@ const GifContainer = () => {
           layout
           className="gifcontainer flex items-center justify-center"
         >
-          {loader && <motion.div layout className="loader"></motion.div>}
           {isGifLoaded && (
             <div className="flex flex-col gap-6">
               <div className="flex gap-5 flex-wrap items-center justify-center">
