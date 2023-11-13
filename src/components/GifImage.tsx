@@ -12,10 +12,11 @@ const GifImage = ({
   gif: any;
   isSaved: boolean;
 }) => {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const [color, setColor] = useState(false);
   const [hovered, setHovered] = useState(false);
 
+  // For Saved Heart or unsaved heart 
   useEffect(() => {
     if (user.saved.includes(isSaved ? gif : gif.images.fixed_height.url)) {
       setColor(true);

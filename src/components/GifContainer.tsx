@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { delay } from "../helpers/utils";
-import { Pagination, message } from "antd";
+import { Button, Pagination, message } from "antd";
 
 import useUser from "@/app/store/useUser";
 import { GiphyFetch } from "@giphy/js-fetch-api";
@@ -82,7 +82,7 @@ const GifContainer = () => {
 
   // The loadmore function which is for loading more gifs
   const loadmore = async () => {
-    if(gifloadmore<=3){
+    if (gifloadmore <= 3) {
       const { data: gifs } = await gf.search(searchData, {
         limit: Limit,
         offset: Limit * gifloadmore,
@@ -90,9 +90,8 @@ const GifContainer = () => {
       setGif([...gif, ...gifs]);
       console.log(gifs);
       setGifloadmore(gifloadmore + 1);
-    }
-    else{
-      OpenMessage('error',"There Is No Gif Left")
+    } else {
+      OpenMessage("error", "There Is No Gif Left");
     }
   };
 
@@ -148,17 +147,19 @@ const GifContainer = () => {
     return () => clearTimeout(getData);
   }, [searchData]);
 
-  useEffect(()=>{
-    setAnimated(false)
-    setGif([])  
-    setLoader(false)
-    setIsGifLoaded(false)
-    setSearchData("")
-  },[isUser])
+  // For Resetng The page After LogOut
+  useEffect(() => {
+    setAnimated(false);
+    setGif([]);
+    setLoader(false);
+    setIsGifLoaded(false);
+    setSearchData("");
+  }, [isUser]);
 
   return (
     <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24 relative">
       {contextHolder} {/* for the message box rendering context */}
+      {/* main Container for gif searching and loading */}
       <motion.div
         layout
         className={`container ${
@@ -167,6 +168,7 @@ const GifContainer = () => {
           isGifLoaded ? "gap-10" : ""
         } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative -mt-9`}
       >
+        {/* Bottom content about the page and me */}
         {!animated && (
           <div className="bottomtext absolute -bottom-20 text-xs md:text-sm text-black text-opacity-40 font-medium flex items-center flex-col">
             Search Whatever, There are Infinite GIFs
@@ -182,6 +184,7 @@ const GifContainer = () => {
             </div>
           </div>
         )}
+        {/* Search Box with Hotsearch */}
         <motion.div
           layout
           className="searchbox flex w-full gap-2 md:gap-4 items-center justify-center flex-wrap"
@@ -211,7 +214,12 @@ const GifContainer = () => {
               placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
-            <CloseOutlined className="cursor-pointer" onClick={()=>{setSearchData("")}}/>
+            <CloseOutlined
+              className="cursor-pointer"
+              onClick={() => {
+                setSearchData("");
+              }}
+            />
           </motion.div>
           {/* If You need search btn */}
           {/* <motion.div
@@ -229,6 +237,7 @@ const GifContainer = () => {
           </motion.div> */}
         </motion.div>
 
+        {/* Gif Contailer where gifs are loaded with a loading animation */}
         <motion.div
           layout
           className="gifcontainer flex items-center justify-center"
@@ -254,22 +263,25 @@ const GifContainer = () => {
                   </span>
                 )}
               </div>
-              <div
-                className="loadmore p-2 px-4 rounded-md bg-black self-center text-white cursor-pointer"
-                onClick={loadmore}
-              >
-                Load More
+              <div className="bottombar w-full flex items-center justify-center gap-3">
+                <Pagination
+                  defaultCurrent={1}
+                  total={gif.length}
+                  defaultPageSize={20}
+                  className=""
+                  onChange={(page, pageSize) => {
+                    setPage(page);
+                    setPaseSize(pageSize);
+                  }}
+                />
+                <Button onClick={loadmore}>Load More</Button>
+                {/* <div
+                  className="loadmore p-2 px-4 rounded-md bg-black self-center text-white cursor-pointer"
+                  onClick={loadmore}
+                >
+                  Load More
+                </div> */}
               </div>
-              <Pagination
-                defaultCurrent={1}
-                total={gif.length}
-                defaultPageSize={20}
-                className="w-full flex items-center justify-center"
-                onChange={(page, pageSize) => {
-                  setPage(page);
-                  setPaseSize(pageSize);
-                }}
-              />
             </div>
           )}
         </motion.div>

@@ -39,6 +39,7 @@ const Navbar = () => {
     password: "",
   });
 
+  // Open The Message box (Toast)
   const OpenMessage = (type: NoticeType, content: string) => {
     messageApi.open({
       type: type,
@@ -46,6 +47,7 @@ const Navbar = () => {
     });
   };
 
+  // Gettign UserData If User Signed in or Signed Up
   const getUserData = async (uid: string) => {
     const docRef = doc(db, "user", uid);
     const docSnap = await getDoc(docRef);
@@ -62,6 +64,7 @@ const Navbar = () => {
     }
   };
 
+  // Login Function with email & password
   const Login = async () => {
     try {
       setMainLoading(true);
@@ -87,6 +90,8 @@ const Navbar = () => {
       setIsUser(false);
     }
   };
+
+  // Signup Function with email & password
   const SignUp = () => {
     try {
       setMainLoading(true);
@@ -140,6 +145,8 @@ const Navbar = () => {
       setIsUser(false);
     }
   };
+
+  // Signout function and reset page data
   const SignOut = () => {
     try {
       auth
@@ -157,6 +164,8 @@ const Navbar = () => {
       OpenMessage("error", "Some Error Occured");
     }
   };
+
+  // Update Email function 
   const UpdateEmail = (email: string) => {
     try {
       updateEmail(auth.currentUser!, email)
@@ -171,6 +180,8 @@ const Navbar = () => {
       OpenMessage("error", "Some Error Occured");
     }
   };
+
+  // Upadate password function 
   const UpdatePassword = (password: string) => {
     try {
       updatePassword(auth.currentUser!, password)
@@ -185,6 +196,8 @@ const Navbar = () => {
       OpenMessage("error", "Some Error Occured");
     }
   };
+
+  // like The gif 
   const like = async (link: string) => {
     try {
       if (user.saved.includes(link)) {
@@ -227,6 +240,8 @@ const Navbar = () => {
     console.log(user);
   };
 
+
+  // Items for the dropdown for profile
   const items: MenuProps["items"] = [
     {
       label: "Saved GIFs",
@@ -266,6 +281,7 @@ const Navbar = () => {
           GIFInfinity
         </div>
         {isUser ? (
+          // If User logged in
           <Dropdown menu={{ items }} trigger={["click"]} className="mr-2">
             <div className="flex gap-2 items-center justify-center">
               <div className="name text-lg cursor-pointer leading-none -mt-[4px] font-medium">
@@ -278,6 +294,7 @@ const Navbar = () => {
             {/* </a> */}
           </Dropdown>
         ) : (
+          // If User Not Logged In
           <div className="name text-lg cursor-pointer leading-none flex gap-4 md:gap-6">
             <span
               onClick={() => {
@@ -297,6 +314,7 @@ const Navbar = () => {
             </span>
           </div>
         )}
+
         {/* Sign up */}
         <Modal
           title="Sign Up"
@@ -471,7 +489,6 @@ const Navbar = () => {
             />
           </div>
         </Modal>
-
         {/* Saved */}
         <Modal
           title="Saved Gifs"
@@ -490,6 +507,7 @@ const Navbar = () => {
             {user.saved.map((gif, index) => (
               <GifImage key={index} like={like} gif={gif} isSaved />
             ))}
+            {user.saved.length==0 && <div className="text-lg">No Saved GIFs There</div>}
           </div>
         </Modal>
       </div>

@@ -12,6 +12,7 @@ import TrendingComp from "@/components/TrendingComp";
 export default function Home() {
   const { setIsUser, setUser, mainLoading, setMainLoading, user } = useUser();
 
+  // Function For Getting User Data If The User Logged In Before
   const getUserData = async (uid: string) => {
     const docRef = doc(db, "user", uid);
     const docSnap = await getDoc(docRef);
@@ -27,6 +28,8 @@ export default function Home() {
       console.log("No such document!");
     }
   };
+
+  // For Checking User Is There Or Not
   useEffect(() => {
     auth.onAuthStateChanged(function (user) {
       if (user) {
@@ -39,7 +42,7 @@ export default function Home() {
 
   return (
     <main className="w-screen min-h-screen flex items-center justify-start flex-col overflow-x-hidden">
-      <Spin spinning={mainLoading} fullscreen />{" "}
+      <Spin spinning={mainLoading} fullscreen />
       {/* The Component For The Loading The screen initially */}
       <Navbar /> {/* The Component For Auth and other stuffs */}
       <GifContainer /> {/* The Component For The Searching the GIFS */}

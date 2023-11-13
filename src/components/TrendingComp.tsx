@@ -77,6 +77,8 @@ const TrendingComp = () => {
     loadTrending()
   })
 
+  // console.log("Trending Component Rerender")
+
   return (
     <div className="w-[90vw] md:w-[70vw] p-2 flex items-center flex-col rounded-lg bg-white  my-10 py-7 gap-6 overflow-hidden">
     {contextHolder} {/* for the message box rendering context */}
