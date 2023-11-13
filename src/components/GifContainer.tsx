@@ -72,6 +72,8 @@ const GifContainer = () => {
     if (gifs.length == 0) {
       OpenMessage("info", "No Gifs Found");
       setAnimated(false);
+      setLoader(false)
+      setSearchData("")
       return;
     } else {
       // animate();
@@ -162,8 +164,17 @@ const GifContainer = () => {
   }, [isUser]);
 
   return (
-    <div className="wrapper flex items-center justify-center min-h-[70vh] mt-20 mb-24 relative">
+    <div className="wrapper flex items-center justify-center min-h-[88vh] mb-32 relative">
       {contextHolder} {/* for the message box rendering context */}
+      {/* Trending Gif Container Direction Displayer */}
+      <div className="bottomcontent absolute -bottom-0 text-sm text-black text-opacity-60 flex flex-col items-center justify-center gap-2">
+        <div className="mouse">
+          <div className="scrollWheel"></div>
+        </div>
+        <div className="text-xs text-black text-opacity-50 font-medium">
+          Scroll For Trending Gifs
+        </div>
+      </div>
       {/* main Container for gif searching and loading */}
       <motion.div
         layout
@@ -171,7 +182,7 @@ const GifContainer = () => {
           animated ? "w-[90vw] md:w-[70vw] min-h-[80vh]" : "w-[750px]"
         } ${
           isGifLoaded ? "gap-10" : ""
-        } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative -mt-9`}
+        } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative `}
       >
         {/* Bottom content about the page and me */}
         {!animated && (
@@ -189,6 +200,7 @@ const GifContainer = () => {
             </div>
           </div>
         )}
+
         {/* Search Box with Hotsearch */}
         <motion.div
           layout
@@ -229,6 +241,7 @@ const GifContainer = () => {
               />
             )}
           </motion.div>
+
           {/* If You need search btn */}
           {/* <motion.div
             layout
