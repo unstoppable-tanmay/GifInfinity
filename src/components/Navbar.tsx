@@ -284,7 +284,7 @@ const Navbar = () => {
           // If User logged in
           <Dropdown menu={{ items }} trigger={["click"]} className="mr-2">
             <div className="flex gap-2 items-center justify-center">
-              <div className="name text-lg cursor-pointer leading-none -mt-[4px] font-medium">
+              <div className="name text-lg cursor-pointer leading-none font-medium">
                 {user.name}
               </div>
               <div className=" image w-[40px] h-[40px] rounded-full cursor-pointer bg-white border-black border flex items-center justify-center text-2xl font-semibold relative overflow-hidden">

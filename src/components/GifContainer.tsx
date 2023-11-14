@@ -227,7 +227,7 @@ const GifContainer = () => {
               layout="preserve-aspect"
               ref={inputRef}
               type="text"
-              name="search"
+              name="hot_search"
               placeholder="Search Anything . . ."
               className="outline-none border-none flex-1 bg-transparent"
             />
