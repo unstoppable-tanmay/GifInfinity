@@ -12,12 +12,14 @@ const gf = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 const TrendingComp = () => {
   const [gif, setGif] = useState<any[]>([]);
   const { isUser,user, setUser } = useUser();
+  const [isLoadedGif,setIsLoadedGif] = useState(false);
 
   const [messageApi, contextHolder] = message.useMessage();
 
   const loadTrending = async () => {
     const { data: gifs } = await gf.trending({ limit: 20 });
     setGif(gifs);
+    setIsLoadedGif(true)
   };
 
   const OpenMessage = (type: NoticeType, content: string) => {
@@ -80,7 +82,7 @@ const TrendingComp = () => {
   // console.log("Trending Component Rerender")
 
   return (
-    <div className="w-[90vw] md:w-[70vw] p-2 flex items-center flex-col rounded-lg bg-white  my-10 py-7 gap-6 overflow-hidden">
+    isLoadedGif && <div className="w-[90vw] md:w-[70vw] p-2 flex items-center flex-col rounded-lg bg-white  my-10 py-7 gap-6 overflow-hidden">
     {contextHolder} {/* for the message box rendering context */}
       <div className="heading text-3xl font-medium">Trending</div>
       <div className="flex gap-5 flex-wrap items-center justify-center">

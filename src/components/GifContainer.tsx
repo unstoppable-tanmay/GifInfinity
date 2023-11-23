@@ -179,7 +179,7 @@ const GifContainer = () => {
       <motion.div
         layout
         className={`container ${
-          animated ? "w-[90vw] md:w-[70vw] min-h-[80vh]" : "w-[750px]"
+          animated ? "w-[90vw] md:w-[70vw] min-h-[80vh]" : "w-[750px] -mt-16"
         } ${
           isGifLoaded ? "gap-10" : ""
         } max-w-[90vw] p-2 md:p-5 rounded-2xl bg-white flex items-center justify-start flex-col shadow-lg relative `}
@@ -204,7 +204,7 @@ const GifContainer = () => {
         {/* Search Box with Hotsearch */}
         <motion.div
           layout
-          className="searchbox flex w-full gap-2 md:gap-4 items-center justify-center flex-wrap"
+          className="searchbox flex w-full gap-2 md:gap-4 items-center justify-center flex-wrap "
         >
           <motion.div
             layout

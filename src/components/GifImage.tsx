@@ -16,7 +16,7 @@ const GifImage = ({
   const [color, setColor] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  // For Saved Heart or unsaved heart 
+  // For Saved Heart or unsaved heart
   useEffect(() => {
     if (user.saved.includes(isSaved ? gif : gif.images.fixed_height.url)) {
       setColor(true);
@@ -27,8 +27,8 @@ const GifImage = ({
 
   return (
     <motion.div
-    initial={{opacity:0,translateY:"100px"}}
-    whileInView={{opacity:1,translateY:"0px"}}
+      initial={{ opacity: 0, translateY: "100px" }}
+      whileInView={{ opacity: 1, translateY: "0px" }}
       className="imgcontainer relative "
       onMouseEnter={() => {
         setHovered(true);
@@ -54,7 +54,7 @@ const GifImage = ({
       <motion.div
         initial={{ opacity: 0, pointerEvents: "none" }}
         animate={hovered ? { opacity: 1, pointerEvents: "all" } : {}}
-        className="hovershare absolute w-full h-full bg-black bg-opacity-40 rounded-md z-10 flex flex-col items-center justify-center"
+        className="hovershare absolute w-full h-full bg-black bg-opacity-40 rounded-md z-10 flex flex-col items-center justify-center gap-2"
       >
         <div
           className="share p-2 px-4 rounded-full bg-white bg-opacity-75 cursor-pointer"
@@ -66,7 +66,11 @@ const GifImage = ({
         >
           Share
         </div>
-        {!isSaved&&<div className="name text-white font-semibold text-lg">{gif.title.split(' ').slice(0,2).join(' ')}</div>}
+        {!isSaved && (
+          <div className="name text-white font-semibold text-lg cursor-default">
+            {gif.title.split(" ").slice(0, 2).join(" ")}
+          </div>
+        )}
       </motion.div>
       <motion.img
         className="w-[150px] h-[150px] md:w-[200px] md:h-[200px] rounded-md  object-cover bg-slate-400"
